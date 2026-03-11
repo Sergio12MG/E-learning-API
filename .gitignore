@@ -18,4 +18,12 @@ pyvenv.cfg
 .venv
 pip-selfcheck.json
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
 # End of https://www.toptal.com/developers/gitignore/api/dotenv,virtualenv
