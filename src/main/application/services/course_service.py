@@ -26,10 +26,10 @@ class CourseService:
     
     # ========= READ =========
     def find_course_id(self, course_id: int) -> Course | None:
-        return self.return_validator.find_by_id(course_id)
+        return self.return_validator.find_id(course_id)
     
     def find_course_title(self, title: str) -> Course | None:
-        return self.return_validator.find_by_title(title)
+        return self.return_validator.find_title(title)
     
     # ========= UPDATE =========
     def update_course(self, course_id: int, user_id: int, title: str | None = None, description: str | None = None) -> Course:
