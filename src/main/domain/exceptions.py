@@ -12,3 +12,9 @@ class Course_NotFound_Error(Exception):
 
 class Course_TitleRepeated_Error(Exception):
     pass
+
+class ParentModule_NotFound_Error(Exception):
+    pass
+
+class Module_NotFound_Error(Exception):
+    pass
