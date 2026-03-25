@@ -17,7 +17,7 @@ class ModuleRepository(ABC):
         pass
 
     @abstractmethod
-    def find_submodules(self, parent_id: int) -> List['CModule'] | None:
+    def find_submodules(self, parent_id: int) -> List[CModule] | None:
         pass
 
     @abstractmethod
