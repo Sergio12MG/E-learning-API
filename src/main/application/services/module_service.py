@@ -1,6 +1,6 @@
 from typing import List
 
-from src.main.domain.models.course import CModule
+from src.main.domain.models.course import CModule, Topic
 from src.main.domain.output_ports.module_ports import ModuleRepository
 from src.main.domain.output_ports.course_ports import CourseRepository
 from src.main.domain.output_ports.user_ports import UserRepository
@@ -38,14 +38,30 @@ class ModuleService:
         return self.repository.save(module)
     
     # ========= READ =========
+    # By ID
     def find_module_id(self, module_id: int) -> CModule | None:
         return self.module_validator.find_id(module_id)
     
+    # By title
     def find_module_title(self, title: str) -> CModule | None:
         return self.module_validator.find_title(title)
     
+    # Submodules
     def find_child_modules(self, parent_id: int) -> List[CModule] | None:
-        return self.repository.find_submodules(parent_id)
+        parent = self.module_validator.find_id(parent_id)
+        submodules = self.repository.find_submodules(parent_id)
+
+        parent.add_submodules([sub for sub in submodules])
+
+        return parent.get_all_submodules()
+    
+    # Topics
+    def find_all_topics(self, module_id: int) -> List[Topic] | None:
+        module = self.module_validator.find_id(module_id)
+        topics = self.repository.find_topics(module_id)
+
+        module.add_topic([topic for topic in topics])
+        return module.get_all_topics()
     
     # ========= UPDATE =========
     def update_module(self,
@@ -87,6 +103,7 @@ class ModuleService:
 
         return self.repository.update(module_to_update)
     
+    # ========= DELETE =========
     def delete_module(self, module_id: int, user_id: int) -> None:
         # 1. Checks the module exists
         current_module = self.module_validator.find_id(module_id)
