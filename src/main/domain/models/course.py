@@ -33,6 +33,15 @@ class CModule:
         """Add a topic to the module"""
         self.topics.append(topic)
 
+    def get_all_submodules(self) -> List['CModule']:
+        """Get all the submodules recursively"""
+        all_submodules = self.submodules.copy()
+
+        for submodule in self.submodules:
+            all_submodules.extend(submodule.get_all_submodules())
+
+        return all_submodules
+
     def get_all_topics(self) -> List[Topic]:
         """Get all the topics recursively (current + submodules)"""
         all_topics = self.topics.copy()
