@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.main.application.services.course_service import CourseService
 from src.main.domain.exceptions import AccessDenied_Error, Course_NotFound_Error, Course_TitleRepeated_Error, User_NotFound_Error
-from src.main.infraestructure.adapters.input.schemas.course import CourseCreate, CourseResponse, CourseUpdate
+from src.main.infraestructure.adapters.input.schemas.course import CourseCreate, CourseResponse, CourseUpdate, Domain_to_Schema
 from src.main.infraestructure.adapters.output.sqlalchemy_course_repo import SQLAlchemy_CourseRepository
 from src.main.infraestructure.adapters.output.sqlalchemy_user_repo import SQLAlchemy_UserRepository
 from src.main.infraestructure.db.database import get_db
@@ -31,13 +31,8 @@ def course_creation(course_data: CourseCreate, service: CourseService = Depends(
             user_id=course_data.user_id
         )
 
-        # Conversion Domain -> Pydantic
-        result = CourseResponse(
-            id=created_course.id,
-            title=created_course.title,
-            description=created_course.description,
-            user_id=created_course.user_id
-        )
+        # Conversion Domain -> Schema
+        result = Domain_to_Schema(created_course)
 
         return GenericResponse(
             success=True,
@@ -53,14 +48,11 @@ def course_creation(course_data: CourseCreate, service: CourseService = Depends(
 @router.get("/{course_id}")
 def course_by_id(course_id: int, service: CourseService = Depends(get_course_service)):
     try:
+        # Conversion Schema -> Domain
         course = service.find_course_id(course_id)
 
-        result = CourseResponse(
-            id=course.id,
-            title=course.title,
-            description=course.description,
-            user_id=course.user_id
-        )
+        # Conversion Domain -> Schema
+        result = Domain_to_Schema(course)
 
         return GenericResponse(
             success=True,
@@ -73,14 +65,11 @@ def course_by_id(course_id: int, service: CourseService = Depends(get_course_ser
 @router.get("/{title}")
 def course_by_title(title: str, service: CourseService = Depends(get_course_service)):
     try:
+        # Conversion Schema -> Domain
         course = service.find_course_title(title)
 
-        result = CourseResponse(
-            id=course.id,
-            title=course.title,
-            description=course.description,
-            user_id=course.user_id
-        )
+        # Conversion Domain -> Schema
+        result = Domain_to_Schema(course)
 
         return GenericResponse(
             success=True,
@@ -94,6 +83,7 @@ def course_by_title(title: str, service: CourseService = Depends(get_course_serv
 @router.patch("/{course_id}/{user_id}")
 def course_update(course_id: int, user_id: int, course_data: CourseUpdate, service: CourseService = Depends(get_course_service)):
     try:
+        # Conversion Schema -> Domain
         course_to_update = service.update_course(
             course_id=course_id,
             useR_id=user_id,
@@ -101,12 +91,8 @@ def course_update(course_id: int, user_id: int, course_data: CourseUpdate, servi
             description=course_data.description
         )
 
-        result = CourseResponse(
-            id=course_to_update.id,
-            title=course_to_update.title,
-            description=course_to_update.description,
-            user_id=course_to_update.user_id
-        )
+        # Conversion Domain -> Schema
+        result = Domain_to_Schema(course_to_update)
 
         return GenericResponse(
             success=True,

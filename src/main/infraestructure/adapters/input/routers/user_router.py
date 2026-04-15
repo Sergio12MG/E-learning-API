@@ -5,7 +5,7 @@ from src.main.application.services.user_service import UserService
 from src.main.domain.exceptions import AccessDenied_Error, User_EmailRepeated_Error, User_NotFound_Error
 from src.main.domain.models.user import User
 from src.main.infraestructure.adapters.input.dependencies.security import get_current_user
-from src.main.infraestructure.adapters.input.schemas.user import UserCreate, UserResponse, UserUpdate
+from src.main.infraestructure.adapters.input.schemas.user import UserCreate, UserResponse, UserUpdate, Domain_to_Schema
 from src.main.infraestructure.adapters.output.sqlalchemy_user_repo import SQLAlchemy_UserRepository
 from src.main.infraestructure.db.database import get_db
 
@@ -32,11 +32,7 @@ def user_registration(user_data: UserCreate, service: UserService = Depends(get_
         )
 
         # Conversion Domain -> Schema
-        result = UserResponse(
-            id=created_user.id,
-            name=created_user.name,
-            email=created_user.email
-        )
+        result = Domain_to_Schema(created_user)
 
         return GenericResponse(
             success=True,
@@ -54,11 +50,7 @@ def user_by_id(user_id: int, service: UserService = Depends(get_user_service)):
         user = service.find_user_id(user_id)
 
         # Domain -> Schema
-        result = UserResponse(
-            id=user.id,
-            name=user.name,
-            email=user.email
-        )
+        result = Domain_to_Schema(user)
 
         return GenericResponse(
             success=True,
@@ -84,11 +76,7 @@ def user_update(user_id: int, user_data: UserUpdate, current_user: User = Depend
         )
 
         # Domain -> Schema
-        result = UserResponse(
-            id=user_to_update.id,
-            name=user_to_update.name,
-            email=user_to_update.email
-        )
+        result = Domain_to_Schema(user_to_update)
 
         return GenericResponse(
             success=True,
