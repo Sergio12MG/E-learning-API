@@ -2,8 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.main.application.services.course_service import CourseService
-from src.main.application.validators.course_validators import Course_Existence_Validator, Course_Return_Validator
-from src.main.application.validators.user_validators import UserBasicValidator
 from src.main.domain.exceptions import AccessDenied_Error, Course_NotFound_Error, Course_TitleRepeated_Error, User_NotFound_Error
 from src.main.infraestructure.adapters.input.schemas.course import CourseCreate, CourseResponse, CourseUpdate
 from src.main.infraestructure.adapters.output.sqlalchemy_course_repo import SQLAlchemy_CourseRepository
