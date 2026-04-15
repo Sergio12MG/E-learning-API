@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field
 
+from src.main.domain.models.course import Course
+
 # Course registration
 class CourseCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=150)
@@ -20,3 +22,12 @@ class CourseResponse(BaseModel):
 
     class Config:
         orm_mode=True
+
+# Entity converter
+def Domain_to_Schema(domain: Course) -> CourseResponse:
+    return CourseResponse(
+        id=domain.id,
+        title=domain.title,
+        description=domain.description,
+        user_id=domain.user_id
+    )

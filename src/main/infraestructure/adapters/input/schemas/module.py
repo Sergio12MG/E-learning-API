@@ -2,6 +2,8 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
+from src.main.domain.models.course import CModule
+
 # Module registration
 class ModuleCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
@@ -34,3 +36,15 @@ class ModuleResponse(BaseModel):
     class Config:
         orm_mode = True
     
+# Entity converter
+def Domain_to_Schema(domain: CModule) -> ModuleResponse:
+    return ModuleResponse(
+        id=domain.id,
+        title=domain.title,
+        description=domain.description,
+        order=domain.order,
+        is_published=domain.is_published,
+        course_id=domain.course_id,
+        parent_id=domain.parent_id,
+        submodules=domain.submodules
+    )

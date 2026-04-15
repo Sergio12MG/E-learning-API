@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
+from src.main.domain.models.user import User
+
 # =========== BASIC SCHEMAS ===========
 # User registration
 class UserCreate(BaseModel):
@@ -43,3 +45,11 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_id: int | None = None
     email: str | None = None
+
+# Entity converter
+def Domain_to_Schema(domain: User) -> UserResponse:
+    return UserResponse(
+        id=domain.id,
+        name=domain.name,
+        email=domain.email
+    )
