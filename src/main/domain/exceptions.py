@@ -1,3 +1,4 @@
+# ===== USER =====
 class User_NotFound_Error(Exception):
     pass
 
@@ -7,14 +8,21 @@ class User_EmailRepeated_Error(Exception):
 class AccessDenied_Error(Exception):
     pass
 
+# ===== COURSE =====
 class Course_NotFound_Error(Exception):
     pass
 
 class Course_TitleRepeated_Error(Exception):
     pass
 
+# ===== MODULE =====
 class ParentModule_NotFound_Error(Exception):
     pass
 
 class Module_NotFound_Error(Exception):
     pass
+
+# ===== TOPIC =====
+class Topic_NotFound_Exception(Exception):
+    pass
+
