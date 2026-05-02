@@ -21,10 +21,6 @@ class ModuleRepository(ABC):
         pass
 
     @abstractmethod
-    def find_topics(self, module_id: int) -> Topic | None:
-        pass
-
-    @abstractmethod
     def update(self, module: CModule) -> CModule | None:
         pass
 
