@@ -9,6 +9,7 @@ class Topic:
     order: int = 0
     topic_type: str = "text"
     resource_url: Optional[str] = None
+    module_id: int
 
 @dataclass
 class CModule:
