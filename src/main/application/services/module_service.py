@@ -56,19 +56,8 @@ class ModuleService:
         # 3. Add each submodule to the array
         parent.add_submodules([sub for sub in submodules])
 
-        return parent.get_all_submodules()
-    
-    # Topics
-    def find_all_topics(self, module_id: int) -> List[Topic] | None:
-        # 1. Check the existence of the module
-        module = self.module_validator.find_id(module_id)
-        # 2. Find all the topics inside the module
-        topics = self.repository.find_topics(module_id)
-
-        # 3. Add each topic to the array
-        module.add_topic([topic for topic in topics])
-        
-        return module.get_all_topics()
+        # 4. Returns only the first-level children modules
+        return submodules        
     
     # ========= UPDATE =========
     def update_module(self,
