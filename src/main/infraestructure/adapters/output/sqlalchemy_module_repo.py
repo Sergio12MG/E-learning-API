@@ -50,7 +50,7 @@ class SQLAlchemy_ModuleRepository(ModuleRepository):
     
     # ========= READ =========
     # By ID
-    def find_by_id(self, module_id) -> CModule | None:
+    def find_by_id(self, module_id: int) -> CModule | None:
         orm_module = self.db.get(ORMModule, module_id)
 
         if not orm_module:
@@ -72,12 +72,6 @@ class SQLAlchemy_ModuleRepository(ModuleRepository):
         orm_submodules = self.db.query(ORMModule).filter(ORMModule.parent_id == parent_id).all()
         
         return [Entity_Converter.ORM_to_Domain(orm_sub) for orm_sub in orm_submodules]
-
-    # Topics
-    def find_topics(self, module_id: int) -> List[Topic] | None:
-        orm_topics = self.db.query(ORMTopic).filter(ORMTopic.module_id == module_id).all()
-
-        return [Topic_EC.ORM_to_Domain(orm_topic) for orm_topic in orm_topics]
         
     # ========= UPDATE =========
     def update(self, module: CModule) -> CModule:
