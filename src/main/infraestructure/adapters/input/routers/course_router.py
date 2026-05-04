@@ -86,7 +86,7 @@ def course_update(course_id: int, user_id: int, course_data: CourseUpdate, servi
         # Conversion Schema -> Domain
         course_to_update = service.update_course(
             course_id=course_id,
-            useR_id=user_id,
+            user_id=user_id,
             title=course_data.title,
             description=course_data.description
         )
