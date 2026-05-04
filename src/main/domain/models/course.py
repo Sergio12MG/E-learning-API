@@ -5,19 +5,19 @@ from typing import List, Optional
 class Topic:
     id: int
     title: str
+    module_id: int
     content: Optional[str] = None
     order: int = 0
     topic_type: str = "text"
     resource_url: Optional[str] = None
-    module_id: int
 
 @dataclass
 class CModule:
     id: int
     title: str
     course_id: int
-    order: int = 0
     is_published: bool
+    order: int = 0
     description: Optional[str] = None
     parent_id: Optional[int] = None
 
