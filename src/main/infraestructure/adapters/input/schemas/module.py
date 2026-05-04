@@ -15,14 +15,13 @@ class ModuleCreate(BaseModel):
 
 # Module update
 class ModuleUpdate(BaseModel):
-    module_id: int | None = None
     title: str | None = None
     order: int | None = None
     is_published: bool | None = None
     description: str | None = None
     parent_id: int | None = None
 
-# Response
+# Response - Single data
 class ModuleResponse(BaseModel):
     id: int
     title: str
@@ -31,13 +30,28 @@ class ModuleResponse(BaseModel):
     is_published: bool
     course_id: int
     parent_id: int
-    submodules: List['ModuleResponse'] = []
 
     class Config:
         orm_mode = True
+
+# Response - Tree structure
+class ModuleWithSubmodulesResponse(ModuleResponse):
+    submodules: List['ModuleWithSubmodulesResponse'] = []
     
 # Entity converter
-def Domain_to_Schema(domain: CModule) -> ModuleResponse:
+def Domain_to_Schema(domain: CModule, include_children: bool = False) -> ModuleResponse:
+    if include_children:
+        return ModuleWithSubmodulesResponse(
+            id=domain.id,
+            title=domain.title,
+            description=domain.description,
+            order=domain.order,
+            is_published=domain.is_published,
+            course_id=domain.course_id,
+            parent_id=domain.parent_id,
+            submodules=[Domain_to_Schema(sub, include_children=True) for sub in domain.submodules],
+        )
+    
     return ModuleResponse(
         id=domain.id,
         title=domain.title,
@@ -45,6 +59,5 @@ def Domain_to_Schema(domain: CModule) -> ModuleResponse:
         order=domain.order,
         is_published=domain.is_published,
         course_id=domain.course_id,
-        parent_id=domain.parent_id,
-        submodules=domain.submodules
+        parent_id=domain.parent_id
     )
