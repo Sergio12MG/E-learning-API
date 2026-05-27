@@ -24,8 +24,22 @@ Include the following values to run the API
     - Host: 127.0.0.1
     - Port: 8000
     - Reload: True
+---
+### 1. Create a new migration
+```powershell
+(env) ...\E-Learning\backend>alembic revision --autogenerate -m "Migration description"
+```
+If need to revert the last migration:
+```powershell
+(env) ...\E-Learning\backend>alembic downgrade -1
+```
 
-### Command to run
+### 2. Apply the migrations to the database
+```powershell
+(env) ...\E-Learning\backend>alembic upgrade head
+```
+
+### 3. Command to run the API
 ```powershell
 (env) ...\E-Learning\backend>py -m src.main.main
 ```
