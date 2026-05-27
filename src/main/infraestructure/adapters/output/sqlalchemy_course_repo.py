@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 
 from src.main.domain.models.course import Course
@@ -39,6 +41,7 @@ class SQLAlchemy_CourseRepository(CourseRepository):
         return Entity_Converter.ORM_to_Domain(orm_course)
 
     # ========= READ =========
+    # By ID
     def find_by_id(self, course_id: int) -> Course | None:
         orm_course = self.db.get(ORMCourse, course_id)
 
@@ -47,6 +50,7 @@ class SQLAlchemy_CourseRepository(CourseRepository):
         
         return Entity_Converter.ORM_to_Domain(orm_course)
     
+    # By title
     def find_by_title(self, title: str) -> Course | None:
         orm_course = self.db.query(ORMCourse).filter(ORMCourse.title == title).first()
 
@@ -54,6 +58,18 @@ class SQLAlchemy_CourseRepository(CourseRepository):
             return Entity_Converter.ORM_to_Domain(orm_course)
         
         return None
+    
+    # By author
+    def find_by_author(self, author_id: int) -> List[Course] | None:
+        orm_courses = self.db.query(ORMCourse).filter(ORMCourse.user_id == author_id).all()
+
+        return [Entity_Converter.ORM_to_Domain(orm_course) for orm_course in orm_courses]
+
+    # All courses
+    def find_all(self) -> List[Course] | None:
+        orm_courses = self.db.query(ORMCourse).all()
+
+        return [Entity_Converter.ORM_to_Domain(orm_course) for orm_course in orm_courses]
     
     # ========= UPDATE =========
     def update(self, course: Course) -> Course:
