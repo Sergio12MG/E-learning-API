@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 from src.main.domain.models.course import Course
 
 class CourseRepository(ABC):
@@ -12,6 +13,14 @@ class CourseRepository(ABC):
 
     @abstractmethod
     def find_by_title(self, title: str) -> Course | None:
+        pass
+
+    @abstractmethod
+    def find_by_author(self, author_id: int) -> List[Course] | None:
+        pass
+
+    @abstractmethod
+    def find_all(self) -> List[Course] | None:
         pass
 
     @abstractmethod
