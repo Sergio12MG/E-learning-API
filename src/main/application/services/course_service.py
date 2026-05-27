@@ -1,3 +1,5 @@
+from typing import List
+
 from src.main.application.validators.course_validators import Course_Return_Validator, Course_Existence_Validator
 from src.main.application.validators.user_validators import UserBasicValidator
 from src.main.domain.exceptions import AccessDenied_Error
@@ -25,11 +27,24 @@ class CourseService:
         return self.repository.save(course)
     
     # ========= READ =========
+    # By ID
     def find_course_id(self, course_id: int) -> Course | None:
         return self.return_validator.find_id(course_id)
     
+    # By title
     def find_course_title(self, title: str) -> Course | None:
         return self.return_validator.find_title(title)
+    
+    # By author
+    def find_course_by_author(self, author_id: int) -> List[Course] | None:
+        # 1. Verify the user exists
+        author = self.user_validator.find_id(author_id)
+        # 2. Run search
+        return self.repository.find_by_author(author.id)
+
+    # All courses
+    def find_courses(self) -> List[Course] | None:
+        return self.repository.find_all()
     
     # ========= UPDATE =========
     def update_course(self, course_id: int, user_id: int, title: str | None = None, description: str | None = None) -> Course:
