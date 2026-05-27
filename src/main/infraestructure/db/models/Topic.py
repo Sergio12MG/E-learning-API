@@ -28,4 +28,4 @@ class Topic(Base):
     )
 
     # --- Relation ---
-    module = relationship("Module", backref="topics")
+    module = relationship("CModule", back_populates="topics")
