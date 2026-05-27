@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from src.main.application.services.course_service import CourseService
 from src.main.domain.exceptions import AccessDenied_Error, Course_NotFound_Error, Course_TitleRepeated_Error, User_NotFound_Error
+from src.main.domain.models.user import User
+from src.main.infraestructure.adapters.input.dependencies.security import get_current_user
 from src.main.infraestructure.adapters.input.schemas.course import CourseCreate, CourseResponse, CourseUpdate, Domain_to_Schema
 from src.main.infraestructure.adapters.output.sqlalchemy_course_repo import SQLAlchemy_CourseRepository
 from src.main.infraestructure.adapters.output.sqlalchemy_user_repo import SQLAlchemy_UserRepository
@@ -21,14 +23,14 @@ def get_course_service(db: Session = Depends(get_db)) -> CourseService:
 
 # ============================================ CREATE ============================================
 @router.post("/create")
-def course_creation(course_data: CourseCreate, service: CourseService = Depends(get_course_service)):
+def course_creation(course_data: CourseCreate, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
     try:
         # Conversion Schema -> Domain
         # Call the application service
         created_course = service.create_course(
             title=course_data.title,
             description=course_data.description,
-            user_id=course_data.user_id
+            user_id=current_user.id
         )
 
         # Conversion Domain -> Schema
@@ -81,12 +83,12 @@ def course_by_title(title: str, service: CourseService = Depends(get_course_serv
     
 # ============================================ UPDATE ============================================
 @router.patch("/{course_id}/{user_id}")
-def course_update(course_id: int, user_id: int, course_data: CourseUpdate, service: CourseService = Depends(get_course_service)):
+def course_update(course_id: int, user_id: int, course_data: CourseUpdate, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
     try:
         # Conversion Schema -> Domain
         course_to_update = service.update_course(
             course_id=course_id,
-            user_id=user_id,
+            user_id=current_user.id,
             title=course_data.title,
             description=course_data.description
         )
@@ -106,9 +108,9 @@ def course_update(course_id: int, user_id: int, course_data: CourseUpdate, servi
     
 # ============================================ DELETE ============================================
 @router.delete("/{course_id}/{user_id}")
-def course_delete(course_id: int, user_id: int, service: CourseService = Depends(get_course_service)):
+def course_delete(course_id: int, user_id: int, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
     try:
-        service.delete_course(course_id, user_id)
+        service.delete_course(course_id, current_user.id)
 
         return GenericResponse(
             success=True,
