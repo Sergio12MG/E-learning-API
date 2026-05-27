@@ -6,7 +6,6 @@ from src.main.domain.models.course import Course
 class CourseCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=150)
     description: str = Field(min_length=5)
-    user_id: int = Field(..., ge=1)
 
 # Course update
 class CourseUpdate(BaseModel):
