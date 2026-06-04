@@ -80,10 +80,40 @@ def course_by_title(title: str, service: CourseService = Depends(get_course_serv
         )
     except Course_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
-    
+
+@router.get("/{author_id}")
+def course_by_author(author_id: int, service: CourseService = Depends(get_course_service)):
+    try:
+        courses = service.find_course_by_author(author_id)
+
+        result = Domain_to_Schema(courses)
+
+        return GenericResponse(
+            success=True,
+            message="Cursos encontrados exitosamente",
+            data=result
+        )
+    except User_NotFound_Error as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.get("/")
+def all_courses(service: CourseService = Depends(get_course_service)):
+    try:
+        courses = service.find_courses()
+
+        result = Domain_to_Schema(courses)
+
+        return GenericResponse(
+            success=True,
+            message="Cursos encontrados exitosamente",
+            data=result
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============================================ UPDATE ============================================
-@router.patch("/{course_id}/{user_id}")
-def course_update(course_id: int, user_id: int, course_data: CourseUpdate, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
+@router.patch("/{course_id}")
+def course_update(course_id: int, course_data: CourseUpdate, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
     try:
         # Conversion Schema -> Domain
         course_to_update = service.update_course(
@@ -107,8 +137,8 @@ def course_update(course_id: int, user_id: int, course_data: CourseUpdate, servi
         raise HTTPException(status_code=403, detail=str(e))
     
 # ============================================ DELETE ============================================
-@router.delete("/{course_id}/{user_id}")
-def course_delete(course_id: int, user_id: int, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
+@router.delete("/{course_id}")
+def course_delete(course_id: int, service: CourseService = Depends(get_course_service), current_user: User = Depends(get_current_user)):
     try:
         service.delete_course(course_id, current_user.id)
 
