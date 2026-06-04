@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from src.main.application.services.module_service import ModuleService
 from src.main.domain.exceptions import AccessDenied_Error, Module_NotFound_Error, ParentModule_NotFound_Error
+from src.main.domain.models.user import User
+from src.main.infraestructure.adapters.input.dependencies.security import get_current_user
 from src.main.infraestructure.adapters.input.schemas.module import ModuleCreate, ModuleUpdate, ModuleResponse, Domain_to_Schema
 from src.main.infraestructure.adapters.output.sqlalchemy_module_repo import SQLAlchemy_ModuleRepository
 from src.main.infraestructure.adapters.output.sqlalchemy_course_repo import SQLAlchemy_CourseRepository
@@ -23,7 +25,7 @@ def get_module_service(db: Session = Depends(get_db)) -> ModuleService:
 
 # ============================================ CREATE ============================================
 @router.post("/create")
-def module_creation(module_data: ModuleCreate, service: ModuleService = Depends(get_module_service)):
+def module_creation(module_data: ModuleCreate, service: ModuleService = Depends(get_module_service), current_user: User = Depends(get_current_user)):
     try:
         # Conversion Schema -> Domain
         created_module = service.create_module(
@@ -97,7 +99,7 @@ def module_tree(module_id: int, service: ModuleService = Depends(get_module_serv
     
 # ============================================ UPDATE ============================================
 @router.patch("/{module_id}")
-def module_update(module_id: int, module_data: ModuleUpdate, service: ModuleService = Depends(get_module_service)):
+def module_update(module_id: int, module_data: ModuleUpdate, service: ModuleService = Depends(get_module_service), current_user: User = Depends(get_current_user)):
     try:
         module_to_update = service.update_module(
             module_id=module_id,
@@ -122,10 +124,10 @@ def module_update(module_id: int, module_data: ModuleUpdate, service: ModuleServ
         raise HTTPException(status_code=404, detail=str(e))
     
 # ============================================ DELETE ============================================
-@router.delete("{module_id}/{user_id}")
-def module_delete(module_id: int, user_id: int, service: ModuleService = Depends(get_module_service)):
+@router.delete("{module_id}")
+def module_delete(module_id: int, service: ModuleService = Depends(get_module_service), current_user: User = Depends(get_current_user)):
     try:
-        service.delete_module(module_id, user_id)
+        service.delete_module(module_id, current_user.id)
 
         return GenericResponse(
             success=True,

@@ -92,8 +92,11 @@ def user_update(user_id: int, user_data: UserUpdate, current_user: User = Depend
 
 # ============================================ DELETE ============================================
 @router.delete("/{user_id}")
-def user_delete(user_id: int, password: str, service: UserService = Depends(get_user_service)):
+def user_delete(user_id: int, password: str, service: UserService = Depends(get_user_service), current_user: User = Depends(get_current_user)):
     try:
+        if current_user.id != user_id:
+            raise AccessDenied_Error("No tienes permisos para eliminar este usuario.")
+
         service.delete_user(user_id, password)
 
         return GenericResponse(
@@ -103,3 +106,5 @@ def user_delete(user_id: int, password: str, service: UserService = Depends(get_
         )
     except User_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=403, detail=str(e))

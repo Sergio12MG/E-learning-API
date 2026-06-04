@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 
 from src.main.application.services.topic_service import TopicService
 from src.main.domain.exceptions import Topic_NotFound_Exception, Module_NotFound_Error
+from src.main.domain.models.user import User
+from src.main.infraestructure.adapters.input.dependencies.security import get_current_user
 from src.main.infraestructure.adapters.input.schemas.topic import TopicCreate, TopicUpdate, Domain_to_Schema
 from src.main.infraestructure.adapters.output.sqlalchemy_topic_repo import SQLAlchemy_TopicRepository
 from src.main.infraestructure.adapters.output.sqlalchemy_module_repo import SQLAlchemy_ModuleRepository
@@ -25,7 +27,7 @@ def get_topic_service(db: Session = Depends(get_db)) -> TopicService:
 
 # ============================================ CREATE ============================================
 @router.post("/create")
-def topic_creation(topic_data: TopicCreate, service: TopicService = Depends(get_topic_service)):
+def topic_creation(topic_data: TopicCreate, service: TopicService = Depends(get_topic_service), current_user: User = Depends(get_current_user)):
     try:
         # Conversion Schema -> Domain
         created_topic = service.create_topic(
@@ -99,7 +101,7 @@ def topic_tree(module_id: int, service: TopicService = Depends(get_topic_service
     
 # ============================================ UPDATE ============================================
 @router.patch("/{topic_id}")
-def topic_update(topic_id: int, topic_data: TopicUpdate, service: TopicService = Depends(get_topic_service)):
+def topic_update(topic_id: int, topic_data: TopicUpdate, service: TopicService = Depends(get_topic_service), current_user: User = Depends(get_current_user)):
     try :
         topic_to_update = service.update_topic(
             topic_id=topic_id,
@@ -123,7 +125,7 @@ def topic_update(topic_id: int, topic_data: TopicUpdate, service: TopicService =
     
 # ============================================ DELETE ============================================
 @router.delete("/{topic_id}")
-def topic_delete(topic_id: int, service: TopicService = Depends(get_topic_service)):
+def topic_delete(topic_id: int, service: TopicService = Depends(get_topic_service), current_user: User = Depends(get_current_user)):
     try:
         service.delete_topic(topic_id)
 
