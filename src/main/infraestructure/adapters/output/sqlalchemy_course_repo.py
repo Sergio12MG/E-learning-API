@@ -73,7 +73,13 @@ class SQLAlchemy_CourseRepository(CourseRepository):
     
     # ========= UPDATE =========
     def update(self, course: Course) -> Course:
-        orm_course = Entity_Converter.Domain_to_ORM(course)
+        orm_course = self.db.get(ORMCourse, course.id)
+
+        if not orm_course:
+            return None
+
+        orm_course.title = course.title
+        orm_course.description = course.description
 
         self.db.commit()
         self.db.refresh(orm_course)
@@ -82,7 +88,7 @@ class SQLAlchemy_CourseRepository(CourseRepository):
     
     # ========= DELETE =========
     def delete_id(self, course_id: int) -> None:
-        orm_course = self.find_by_id(course_id)
+        orm_course = self.db.get(ORMCourse, course_id)
 
         if orm_course:
             self.db.delete(orm_course)
