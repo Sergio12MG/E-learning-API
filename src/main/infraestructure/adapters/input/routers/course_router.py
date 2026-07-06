@@ -64,7 +64,7 @@ def course_by_id(course_id: int, service: CourseService = Depends(get_course_ser
     except Course_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.get("/{title}")
+@router.get("/title/")
 def course_by_title(title: str, service: CourseService = Depends(get_course_service)):
     try:
         # Conversion Schema -> Domain
@@ -81,12 +81,12 @@ def course_by_title(title: str, service: CourseService = Depends(get_course_serv
     except Course_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/{author_id}")
+@router.get("/author/{author_id}")
 def course_by_author(author_id: int, service: CourseService = Depends(get_course_service)):
     try:
         courses = service.find_course_by_author(author_id)
 
-        result = Domain_to_Schema(courses)
+        result = [Domain_to_Schema(course) for course in courses]
 
         return GenericResponse(
             success=True,
@@ -101,7 +101,7 @@ def all_courses(service: CourseService = Depends(get_course_service)):
     try:
         courses = service.find_courses()
 
-        result = Domain_to_Schema(courses)
+        result = [Domain_to_Schema(course) for course in courses]
 
         return GenericResponse(
             success=True,
