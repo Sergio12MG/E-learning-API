@@ -33,11 +33,19 @@ class CModule(Base):
     # Towards the submodules
     submodules = relationship(
         "CModule",
-        backref="parent", # Create automatically the 'parent' property
-        remote_side=[id], # Indicates which column is the 'parent'
+        back_populates="parent_module",
+        remote_side=[id],
+        foreign_keys=[parent_id],
         cascade="all, delete-orphan",
-        single_parent=True,
         lazy="selectin" # Efficient loading of child elements
+    )
+
+    # Parent module reference
+    parent_module = relationship(
+        "CModule",
+        back_populates="submodules",
+        remote_side=[id],
+        foreign_keys=[parent_id]
     )
 
     # Towards the themes
