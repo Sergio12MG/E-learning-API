@@ -38,11 +38,11 @@ def module_creation(module_data: ModuleCreate, service: ModuleService = Depends(
         )
 
         # Conversion Domain -> Schema
-        result = Domain_to_Schema(created_module)
+        result = Domain_to_Schema(created_module, include_children=False)
 
         return GenericResponse(
             success=True,
-            message="Módulo craedo exitosamente",
+            message="Módulo creado exitosamente",
             data=result
         )
     except ParentModule_NotFound_Error as e:
@@ -65,7 +65,7 @@ def module_by_id(module_id: int, service: ModuleService = Depends(get_module_ser
     except Module_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
 
-@router.get("/{title}") # By title
+@router.get("/title/") # By title
 def module_by_title(title: str, service: ModuleService = Depends(get_module_service)):
     try:
         module = service.find_module_title(title)
@@ -84,10 +84,10 @@ def module_by_title(title: str, service: ModuleService = Depends(get_module_serv
 @router.get("/{module_id}/tree") # First-level children modules
 def module_tree(module_id: int, service: ModuleService = Depends(get_module_service)):
     try:
-        module = service.find_child_modules(module_id)
+        parent_module = service.find_child_modules(module_id)
 
         # Conversion Domain -> schema
-        result = Domain_to_Schema(module, include_children=True)
+        result = Domain_to_Schema(parent_module, include_children=True)
 
         return GenericResponse(
             success=True,
@@ -107,7 +107,7 @@ def module_update(module_id: int, module_data: ModuleUpdate, service: ModuleServ
             order=module_data.order,
             is_published=module_data.is_published,
             description=module_data.description,
-            parent_id=module_data.parent_id
+            new_parent_id=module_data.parent_id
         )
 
         # Conversion Domain -> Schema
@@ -124,7 +124,7 @@ def module_update(module_id: int, module_data: ModuleUpdate, service: ModuleServ
         raise HTTPException(status_code=404, detail=str(e))
     
 # ============================================ DELETE ============================================
-@router.delete("{module_id}")
+@router.delete("/{module_id}")
 def module_delete(module_id: int, service: ModuleService = Depends(get_module_service), current_user: User = Depends(get_current_user)):
     try:
         service.delete_module(module_id, current_user.id)
