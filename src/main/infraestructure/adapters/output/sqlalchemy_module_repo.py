@@ -75,7 +75,16 @@ class SQLAlchemy_ModuleRepository(ModuleRepository):
         
     # ========= UPDATE =========
     def update(self, module: CModule) -> CModule:
-        orm_module = Entity_Converter.Domain_to_ORM(module)
+        orm_module = self.db.get(ORMModule, module.id)
+
+        if not orm_module:
+            return None
+
+        orm_module.title = module.title
+        orm_module.order = module.order
+        orm_module.is_published = module.is_published
+        orm_module.description = module.description
+        orm_module.parent_id = module.parent_id
 
         self.db.commit()
         self.db.refresh(orm_module)
