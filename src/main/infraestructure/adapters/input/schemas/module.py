@@ -11,7 +11,7 @@ class ModuleCreate(BaseModel):
     order: int = Field(..., ge=0)
     is_published: bool = Field(...)
     description: str = Field(min_length=5, max_length=500)
-    parent_id: int = Field(ge=1)
+    parent_id: Optional[int] = Field(default=None, ge=1)
 
 # Module update
 class ModuleUpdate(BaseModel):
@@ -29,7 +29,7 @@ class ModuleResponse(BaseModel):
     order: int
     is_published: bool
     course_id: int
-    parent_id: int
+    parent_id: Optional[int]
 
     class Config:
         orm_mode = True
