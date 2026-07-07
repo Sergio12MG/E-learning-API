@@ -53,11 +53,12 @@ class ModuleService:
         # 2. Find the children modules
         submodules = self.repository.find_submodules(parent_id)
 
-        # 3. Add each submodule to the array
-        parent.add_submodules([sub for sub in submodules])
+        # 3. Assign the submodules array
+        if submodules:
+            parent.add_submodules(submodules)
 
-        # 4. Returns only the first-level children modules
-        return submodules        
+        # 4. Returns the parent with only the first-level children modules
+        return parent
     
     # ========= UPDATE =========
     def update_module(self,
