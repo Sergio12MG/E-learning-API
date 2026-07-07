@@ -25,10 +25,11 @@ class CModule:
     submodules: List['CModule'] = field(default_factory=list)
     topics: List[Topic] = field(default_factory=list)
 
-    def add_submodules(self, submodule: 'CModule') -> None:
-        """Add a child submodule"""
-        submodule.parent_id = self.id
-        self.submodules.append(submodule)
+    def add_submodules(self, submodules: List['CModule']) -> None:
+        """Add child submodules"""
+        for submodule in submodules:
+            submodule.parent_id = self.id
+            self.submodules.append(submodule)
 
     def add_topic(self, topic: Topic) -> None:
         """Add a topic to the module"""
