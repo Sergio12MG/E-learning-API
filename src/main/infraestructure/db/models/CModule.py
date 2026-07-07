@@ -36,7 +36,6 @@ class CModule(Base):
         back_populates="parent_module",
         remote_side=[id],
         foreign_keys=[parent_id],
-        cascade="all, delete-orphan",
         lazy="selectin" # Efficient loading of child elements
     )
 
@@ -44,7 +43,6 @@ class CModule(Base):
     parent_module = relationship(
         "CModule",
         back_populates="submodules",
-        remote_side=[id],
         foreign_keys=[parent_id]
     )
 
