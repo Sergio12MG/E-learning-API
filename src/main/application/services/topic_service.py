@@ -52,7 +52,7 @@ class TopicService:
         # 1. Checks that the module exists
         module = self.module_validator.find_id(module_id)
         # 2. Find all the topics inside the module
-        topics = self.repository.find_topics(module_id)
+        topics = self.repository.find_all_by_module(module_id)
 
         # 3. Add each topic to the array
         module.add_topic([topic for topic in topics])
