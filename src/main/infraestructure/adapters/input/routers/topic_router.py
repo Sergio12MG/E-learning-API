@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from src.main.application.services.topic_service import TopicService
-from src.main.domain.exceptions import Topic_NotFound_Exception, Module_NotFound_Error
+from src.main.domain.exceptions import AccessDenied_Error, Topic_NotFound_Exception, Module_NotFound_Error
 from src.main.domain.models.user import User
 from src.main.infraestructure.adapters.input.dependencies.security import get_current_user
 from src.main.infraestructure.adapters.input.schemas.topic import TopicCreate, TopicUpdate, Domain_to_Schema
@@ -32,11 +32,11 @@ def topic_creation(topic_data: TopicCreate, service: TopicService = Depends(get_
         # Conversion Schema -> Domain
         created_topic = service.create_topic(
             title=topic_data.title,
+            module_id=topic_data.module_id,
             content=topic_data.content,
+            resource_url=topic_data.resource_url,
             order=topic_data.order,
             topic_type=topic_data.topic_type,
-            resource_url=topic_data.resource_url,
-            module_id=topic_data.module_id
         )
 
         # Conversion Domain -> Schema
@@ -49,6 +49,8 @@ def topic_creation(topic_data: TopicCreate, service: TopicService = Depends(get_
         )
     except Module_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=401, detail=str(e))
     
 # ============================================ READ ============================================
 @router.get("/{topic_id}") # By ID
@@ -67,7 +69,7 @@ def topic_by_id(topic_id: int, service: TopicService = Depends(get_topic_service
     except Topic_NotFound_Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
     
-@router.get("/{title}") # By title
+@router.get("/title/") # By title
 def topic_by_title(title: str, service: TopicService = Depends(get_topic_service)):
     try:
         topic = service.find_topic_title(title)
@@ -122,6 +124,8 @@ def topic_update(topic_id: int, topic_data: TopicUpdate, service: TopicService =
         )
     except Topic_NotFound_Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=401, detail=str(e))
     
 # ============================================ DELETE ============================================
 @router.delete("/{topic_id}")
@@ -136,3 +140,5 @@ def topic_delete(topic_id: int, service: TopicService = Depends(get_topic_servic
         )
     except Topic_NotFound_Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=401, detail=str(e))
