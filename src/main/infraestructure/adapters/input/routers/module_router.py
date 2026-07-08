@@ -47,6 +47,8 @@ def module_creation(module_data: ModuleCreate, service: ModuleService = Depends(
         )
     except ParentModule_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=401, detail=str(e))
     
 # ============================================ READ ============================================
 @router.get("/{module_id}") # By ID
@@ -122,6 +124,8 @@ def module_update(module_id: int, module_data: ModuleUpdate, service: ModuleServ
         raise HTTPException(status_code=404, detail=str(e))
     except ParentModule_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=401, detail=str(e))
     
 # ============================================ DELETE ============================================
 @router.delete("/{module_id}")

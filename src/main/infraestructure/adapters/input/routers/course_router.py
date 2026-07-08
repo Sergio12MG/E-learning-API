@@ -45,6 +45,8 @@ def course_creation(course_data: CourseCreate, service: CourseService = Depends(
         raise HTTPException(status_code=400, detail=str(e))
     except User_NotFound_Error as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except AccessDenied_Error as e:
+        raise HTTPException(status_code=401, detail=str(e))
 
 # ============================================ READ ============================================
 @router.get("/{course_id}")
