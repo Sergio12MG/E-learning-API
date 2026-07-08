@@ -6,16 +6,15 @@ from src.main.domain.models.course import Topic
 
 # Topic registration
 class TopicCreate(BaseModel):
-    title: str = Field(..., min_length=1, max_length=25)
+    title: str = Field(..., min_length=1, max_length=40)
+    module_id: int = Field(..., ge=0)
     content: str = Field(min_length=5, max_length=500)
     order: int = Field(..., ge=0)
     topic_type: str = Field(...)
     resource_url: str = Field(min_length=1)
-    module_id: str = Field(..., ge=0)
 
 # Topic update
 class TopicUpdate(BaseModel):
-    topic_id: int
     title: str | None = None
     content: str | None = None
     order: int | None = None
