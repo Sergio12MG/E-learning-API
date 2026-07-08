@@ -26,7 +26,8 @@ class Entity_Converter:
             content=orm.content,
             order=orm.order,
             topic_type=orm.topic_type,
-            resource_url=orm.resource_url
+            resource_url=orm.resource_url,
+            module_id=orm.module_id
         )
     
 class SQLAlchemy_TopicRepository(TopicRepository):
@@ -65,14 +66,23 @@ class SQLAlchemy_TopicRepository(TopicRepository):
         return None
     
     # All topics by a given module
-    def find_topics(self, module_id: int) -> List[Topic] | None:
+    def find_all_by_module(self, module_id: int) -> List[Topic] | None:
         orm_topics = self.db.query(ORMTopic).filter(ORMTopic.module_id == module_id).all()
 
         return [Entity_Converter.ORM_to_Domain(orm_topic) for orm_topic in orm_topics]
     
     # ========= UPDATE =========
     def update(self, topic: Topic) -> Topic:
-        orm_topic = Entity_Converter.Domain_to_ORM(topic)
+        orm_topic = self.db.get(ORMTopic, topic.id)
+
+        if not orm_topic:
+            return None
+
+        orm_topic.title = topic.title
+        orm_topic.content = topic.content
+        orm_topic.order = topic.order
+        orm_topic.topic_type = topic.topic_type
+        orm_topic.resource_url = topic.resource_url
 
         self.db.commit()
         self.db.refresh(orm_topic)
