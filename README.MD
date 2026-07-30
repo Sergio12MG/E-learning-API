@@ -3,7 +3,7 @@
 ## General description
 This system was developed using FastAPI, structured by the hexagonal arquitecture and best code practices.
 
-> Within the virtual environment, run **pip install -r requirements.txt**
+> Note: You will need to have Docker Compose in your machine. Otherwise, look at the instructions below.
 
 ## Project structure
 ### 🏠 Main
@@ -25,6 +25,20 @@ Include the following values to run the API
     - Port: 8000
     - Reload: True
 ---
+
+### Execution using Docker:
+- First step
+```powershell
+(env) ...\E-Learning\backend>docker-compose up --build
+```
+- Execution of migrations (in another console)
+```powershell
+(env) ...\E-Learning\backend>docker-compose exec api alembic upgrade head
+```
+---
+### Execution without Docker
+> Within the virtual environment, run **pip install -r requirements.txt**
+
 ### 1. Create a new migration
 ```powershell
 (env) ...\E-Learning\backend>alembic revision --autogenerate -m "Migration description"
@@ -43,6 +57,4 @@ If need to revert the last migration:
 ```powershell
 (env) ...\E-Learning\backend>py -m src.main.main
 ```
-
 ---
-
